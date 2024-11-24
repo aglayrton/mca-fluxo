@@ -14,7 +14,7 @@ SECRET_KEY = 'django-insecure-y&)r&jy*46omspf$_%)+rsf=&$edxg@ex(=d31=0==z1%1kw8n
 DEBUG = True
 
 #acesso somente com dominio que tem abaixo são aceitos
-ALLOWED_HOSTS = ['mca-alex.onrender.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['mca-fluxo.onrender.com', '127.0.0.1', 'localhost']
 
 
 # Application definition
