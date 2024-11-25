@@ -4,4 +4,4 @@ from fluxo.models import FluxoAgua
 class FluxoAguaSerializer(serializers.ModelSerializer):
     class Meta:
         model = FluxoAgua
-        fields = ['id', 'consumo_diario', 'data', 'registro']
+        fields = ['consumo_diario', 'data']
