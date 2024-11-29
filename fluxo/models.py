@@ -8,7 +8,7 @@ class Consumo(models.Model):
         return f"{self.data_hora} - {self.consumo} L"
 
 class FluxoAgua(models.Model):
-    data = models.DateField(verbose_name='Data')
+    data = models.DateField(verbose_name='Data', unique=True)
     consumo_diario = models.DecimalField(verbose_name='Consumo Diário', max_digits=10, decimal_places=2)
     hora = models.TimeField(verbose_name='Hora', default='00:00')
 

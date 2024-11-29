@@ -17,12 +17,10 @@ class ConsumoSerializer(serializers.ModelSerializer):
         read_only_fields = ['hora_consumo', 'data_consumo']
 
     def get_hora_consumo(self, obj):
-       
         local_time = timezone.localtime(obj.data_hora)
         return local_time.strftime('%H:%M:%S')
 
     def get_data_consumo(self, obj):
-   
         local_time = timezone.localtime(obj.data_hora)
         return local_time.strftime('%d/%m/%Y')
 
