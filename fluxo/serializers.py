@@ -3,9 +3,16 @@ from .models import FluxoAgua, Consumo
 from django.utils import timezone
 
 class FluxoAguaSerializer(serializers.ModelSerializer):
+    data_hora = serializers.SerializerMethodField()
+
     class Meta:
         model = FluxoAgua
-        fields = ['data', 'hora', 'consumo_diario']
+        fields = ['data_hora', 'litros']
+
+    def get_data_hora(self, obj):
+        local_time = timezone.localtime(obj.data_hora)
+        return local_time.strftime('%d/%m/%Y %H:%M:%S')
+
 
 class ConsumoSerializer(serializers.ModelSerializer):
     hora_consumo = serializers.SerializerMethodField()
