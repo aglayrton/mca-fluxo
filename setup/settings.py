@@ -59,7 +59,9 @@ TEMPLATES = [
     },
 ]
 
+ROOT_URLCONF = 'setup.urls'
 WSGI_APPLICATION = 'setup.wsgi.application'
+
 
 
 # Database
