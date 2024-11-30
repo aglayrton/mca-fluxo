@@ -29,19 +29,20 @@ class FluxoAguaSerializer(serializers.ModelSerializer):
         except ValueError:
             raise serializers.ValidationError("O consumo_diario deve ser um número válido.")
 
-# Adjusted Serializer to reference ConsumoDiario
+
 class ConsumoDiarioSerializer(serializers.ModelSerializer):
     hora = serializers.SerializerMethodField()
 
     class Meta:
-        model = ConsumoDiario  # Changed from Consumo to ConsumoDiario
+        model = ConsumoDiario
         fields = ['data', 'hora', 'consumo_total']
         read_only_fields = ['hora']
 
     def get_hora(self, obj):
-        return obj.hora.strftime('%H:%M:%S')
+        return obj.hora.strftime('%H:%M:%S') if obj.hora else "Sem dados"
 
     def validate_consumo_total(self, value):
         if value < 0:
             raise serializers.ValidationError("O consumo_total não pode ser negativo.")
         return value
+
