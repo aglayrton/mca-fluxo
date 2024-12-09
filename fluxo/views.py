@@ -1,4 +1,5 @@
 from rest_framework import viewsets, status, mixins
+from rest_framework.viewsets import ViewSet
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.db.models import Sum
@@ -17,8 +18,8 @@ class FluxoViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.Gene
         today = localtime().date()
         return FluxoAgua.objects.filter(data_hora__date=today).order_by('-data_hora')
 
-class ConsumoDiarioView(APIView):
-    def get(self, request):
+class ConsumoDiarioView(ViewSet):
+    def list(self, request):
         now = localtime()
         hoje = now.date()
         ontem = hoje - timedelta(days=1)
@@ -47,4 +48,3 @@ class ConsumoDiarioView(APIView):
             "hora": ultima_hora,
             "consumo_diario": consumo_total
         })
-

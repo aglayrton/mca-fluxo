@@ -4,8 +4,8 @@ from .views import FluxoViewSet, ConsumoDiarioView
 
 router = routers.DefaultRouter()
 router.register(r'fluxo', FluxoViewSet, basename='fluxo')
+router.register(r'consumo-diario', ConsumoDiarioView, basename='consumo_diario')
 
 urlpatterns = [
     path('', include(router.urls)),
-    path('consumo-diario/', ConsumoDiarioView.as_view() ,name='consumo_diario'),
 ]
