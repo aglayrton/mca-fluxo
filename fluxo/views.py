@@ -1,22 +1,19 @@
-from rest_framework import viewsets, status, mixins
-from rest_framework.viewsets import ViewSet
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from datetime import timedelta
+from decimal import Decimal
 from django.db.models import Sum
 from django.utils.timezone import localtime
-from datetime import date, timedelta
-import logging
+from rest_framework.response import Response
+from rest_framework.viewsets import ViewSet, GenericViewSet, mixins
 from .models import FluxoAgua, ConsumoDiario
 from .serializers import FluxoAguaSerializer, ConsumoDiarioSerializer
 
-logger = logging.getLogger(__name__)
-
-class FluxoViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, viewsets.GenericViewSet):
+class FluxoViewSet(mixins.ListModelMixin, mixins.CreateModelMixin, GenericViewSet):
     serializer_class = FluxoAguaSerializer
 
     def get_queryset(self):
         today = localtime().date()
         return FluxoAgua.objects.filter(data_hora__date=today).order_by('-data_hora')
+
 
 class ConsumoDiarioView(ViewSet):
     def list(self, request):
@@ -26,10 +23,10 @@ class ConsumoDiarioView(ViewSet):
 
         if not ConsumoDiario.objects.filter(data=ontem).exists():
             consumo_ontem = FluxoAgua.objects.filter(data_hora__date=ontem).aggregate(
-                total=Sum('consumo_diario')
-            )['total'] or 0
-            ultima_hora_ontem = FluxoAgua.objects.filter(data_hora__date=ontem).order_by('-data_hora').first()
-            hora_ultima_alteracao = ultima_hora_ontem.data_hora.time() if ultima_hora_ontem else None
+                total=Sum('valor')
+            )['total'] or Decimal('0.00')
+            ultima_leitura_ontem = FluxoAgua.objects.filter(data_hora__date=ontem).order_by('-data_hora').first()
+            hora_ultima_alteracao = ultima_leitura_ontem.data_hora.time() if ultima_leitura_ontem else None
 
             ConsumoDiario.objects.create(
                 data=ontem,
@@ -37,14 +34,16 @@ class ConsumoDiarioView(ViewSet):
                 hora=hora_ultima_alteracao
             )
 
-        consumo_total = FluxoAgua.objects.filter(data_hora__date=hoje).aggregate(
-            total=Sum('consumo_diario')
-        )['total'] or 0
-        ultima_modificacao = FluxoAgua.objects.filter(data_hora__date=hoje).order_by('-data_hora').first()
-        ultima_hora = ultima_modificacao.data_hora.strftime('%H:%M:%S') if ultima_modificacao else "Sem dados"
+        consumo_diario_obj = ConsumoDiario.objects.filter(data=hoje).first()
+        if consumo_diario_obj:
+            consumo_total_valor = consumo_diario_obj.consumo_total
+            ultima_hora = consumo_diario_obj.hora.strftime('%H:%M:%S') if consumo_diario_obj.hora else "Sem dados"
+        else:
+            consumo_total_valor = Decimal('0.00')
+            ultima_hora = "Sem dados"
 
         return Response({
             "data": now.strftime('%d/%m/%Y'),
             "hora": ultima_hora,
-            "consumo_diario": consumo_total
+            "consumo_diario": str(consumo_total_valor)
         })
