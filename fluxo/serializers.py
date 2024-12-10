@@ -29,10 +29,9 @@ class FluxoAguaSerializer(serializers.ModelSerializer):
 
         if ultima_leitura:
             valor_anterior = ultima_leitura.valor
-            if leitura_atual > valor_anterior:
-                diferenca = leitura_atual - valor_anterior
-            else:
-                diferenca = leitura_atual
+            diferenca = leitura_atual - valor_anterior
+            if diferenca <= 0:
+                diferenca = Decimal('0.00')
         else:
             diferenca = leitura_atual
 
@@ -52,6 +51,7 @@ class FluxoAguaSerializer(serializers.ModelSerializer):
             consumo_diario_obj.save()
 
         return fluxo
+
 
 
 class ConsumoDiarioSerializer(serializers.ModelSerializer):
